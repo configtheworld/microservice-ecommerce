@@ -1,0 +1,22 @@
+{
+  "name": "microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/configtheworld/microservice-ecommerce.git"
+  },
+  "author": "configtheworld",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/configtheworld/microservice-ecommerce/issues"
+  },
+  "homepage": "https://github.com/configtheworld/microservice-ecommerce#readme",
+  "dependencies": {
+    "jsonwebtoken": "^8.5.1"
+  }
+}
