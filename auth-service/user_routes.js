@@ -4,9 +4,19 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 var jwt = require('jsonwebtoken');
 
+/**Ping
+ * @desc test server is running
+ * @exp res : pong
+ */
+
 router.get('/ping', (req, res) => {
   res.send('pong');
 });
+
+/**Sign Up / register
+ * @desc new user registration
+ * @res  operation status message
+ */
 
 router.post('/auth/register', async (req, res) => {
   const { email, password, name } = req.body;
@@ -27,8 +37,14 @@ router.post('/auth/register', async (req, res) => {
     }
   } catch (error) {
     console.log(error);
+    return res.json({ message: 'User could not registered!' });
   }
 });
+
+/**Login
+ * @desc Login with validation
+ * @res  access token
+ */
 
 router.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
@@ -62,7 +78,7 @@ router.post('/auth/login', async (req, res) => {
       }
     }
   } catch (error) {
-    console.log(error);
+    return res.json({ message: 'Wrong email or password! Try Again!' });
   }
 });
 
