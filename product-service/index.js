@@ -3,10 +3,11 @@ const app = express();
 const PORT = process.env.AUTH_PORT || 3002;
 const mongoose = require('mongoose');
 const amqp = require('amqplib');
+const product_routes = require('./product_routes');
 let channel, connection;
 
 mongoose
-  .connect('mongodb://localhost/auth-service', {
+  .connect('mongodb://localhost/product-service', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -26,6 +27,8 @@ async function queue_connect() {
 queue_connect();
 
 app.use(express.json());
+
+app.use(product_routes);
 
 app.listen(PORT, () => {
   console.log('product service is on live');
