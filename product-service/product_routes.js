@@ -3,37 +3,50 @@ const Product = require('./Product');
 const router = express.Router();
 const isAuthenticated = require('../auth_middleware');
 
+/**Ping
+ * @desc test server is running
+ * @exp res : pong
+ */
+
 router.get('/ping', (req, res) => {
   res.send('pong');
 });
 
-router.post('/product/create', isAuthenticated, async (req, res) => {
-  const { name, description, price } = req.body;
+/**Product Buy with Array
+ * @body product_barcodes:[]
+ * @desc buy operation
+ */
 
-  const new_product = new Product({ name, description, price });
-  return res.send('eh');
+router.post('/product/create', isAuthenticated, async (req, res) => {
+  try {
+    const { name, description, price } = req.body;
+    const new_product = new Product({ name, description, price });
+    new_product.save();
+    return res.send({
+      message: 'Product (' + new_product.name + ') successfully created',
+    });
+  } catch (error) {
+    console.log(error);
+    return res.json({ message: 'Product could not created' });
+  }
 });
 
-// router.post('/auth/register', async (req, res) => {
-//   const { email, password, name } = req.body;
+/**Product Buy with Array
+ * @body product_barcodes:[]
+ * @desc buy operation
+ */
 
-//   try {
-//     const emailTaken = await User.findOne({ email });
-//     if (emailTaken) {
-//       return res.json({ message: 'Mail Already Taken!' });
-//     } else {
-//       const hash = await bcrypt.hash(password, 10);
-//       const new_user = new User({
-//         name: name,
-//         email: email,
-//         password: hash,
-//       });
-//       new_user.save();
-//       return res.json({ message: 'User Successfully Registered!' });
-//     }
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
+router.post('/product/buy', isAuthenticated, async (req, res) => {
+  try {
+    const { product_barcodes } = req.body;
+
+    const products = await Product.find({ _id: { $in: product_barcodes } });
+
+    return res.json({ message: products });
+  } catch (error) {
+    console.log(error);
+    return res.json({ message: 'Product could not bought' });
+  }
+});
 
 module.exports = router;
