@@ -26,13 +26,14 @@ async function queue_connect() {
 }
 queue_connect();
 
+module.exports = async function getChannel() {
+  return channel;
+};
+
 app.use(express.json());
 
 // channel need to be accessible from router file
-app.use((req, res, next) => {
-  req.channel = channel;
-  next();
-}, product_routes);
+app.use(product_routes);
 
 app.listen(PORT, () => {
   console.log('product service is on live');

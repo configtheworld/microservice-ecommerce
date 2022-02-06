@@ -2,7 +2,7 @@ const express = require('express');
 const Product = require('./Product');
 const router = express.Router();
 const isAuthenticated = require('../auth_middleware');
-const amqp = require('amqplib');
+const getChannel = require('./index');
 /**Ping
  * @desc test server is running
  * @exp res : pong
@@ -42,7 +42,8 @@ router.post('/product/buy', isAuthenticated, async (req, res) => {
 
     const products = await Product.find({ _id: { $in: product_barcodes } });
 
-    const channel = req.channel;
+    // TODO: channel.sentToQueue is not a function
+    const channel = getChannel;
     channel.sentToQueue(
       'ORDER',
       Buffer.from(JSON.stringify({ products, userEmail: req.user.email }))
