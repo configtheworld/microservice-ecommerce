@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
-const PORT = process.env.AUTH_PORT || 3002;
+const PORT = process.env.AUTH_PORT || 3003;
 const mongoose = require('mongoose');
 const amqp = require('amqplib');
-const product_routes = require('./product_routes');
+const order_routes = require('./order_routes');
 let channel, connection;
 
 mongoose
-  .connect('mongodb://localhost/product-service', {
+  .connect('mongodb://localhost/order-service', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -22,18 +22,20 @@ async function queue_connect() {
   const amqp_server = 'amqp://localhost:5672';
   connection = await amqp.connect(amqp_server);
   channel = await connection.createChannel();
-  await channel.assertQueue('PRODUCT');
+  await channel.assertQueue('ORDER');
 }
-queue_connect();
+queue_connect().then(() => {
+  channel.consume('ORDER', (data) => {
+    const { products, userEmail } = JSON.parse(data.content);
+    console.log('Consuming ORDER queue');
+    console.log(products);
+  });
+});
 
 app.use(express.json());
 
-// channel need to be accessible from router file
-app.use((req, res, next) => {
-  req.channel = channel;
-  next();
-}, product_routes);
+app.use(order_routes);
 
 app.listen(PORT, () => {
-  console.log('product service is on live');
+  console.log('order service is on live');
 });
