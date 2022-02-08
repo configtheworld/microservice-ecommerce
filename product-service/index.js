@@ -3,7 +3,6 @@ const app = express();
 const PORT = process.env.AUTH_PORT || 3002;
 const mongoose = require('mongoose');
 const Product = require('./Product');
-const jwt = require('jsonwebtoken');
 const amqp = require('amqplib');
 const isAuthenticated = require('../auth_middleware');
 var order;
