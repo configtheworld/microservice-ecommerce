@@ -28,7 +28,6 @@ queue_connect().then(() => {
   channel.consume('ORDER', (data) => {
     const { products, userEmail } = JSON.parse(data.content);
     console.log('Consuming ORDER queue');
-    console.log(products);
   });
 });
 
