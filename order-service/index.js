@@ -6,7 +6,7 @@ const amqp = require('amqplib');
 const order_routes = require('./order_routes');
 const Order = require('./Order');
 let channel, connection;
-
+var order;
 mongoose
   .connect('mongodb://localhost/order-service', {
     useNewUrlParser: true,
@@ -34,12 +34,18 @@ queue_connect().then(() => {
     channel.ack(data);
     channel.sendToQueue(
       'PRODUCT',
-      Buffer.from(JSON.stringify({ products, userEmail: req.user.email }))
+      Buffer.from(JSON.stringify({ products, userEmail: userEmail }))
     );
+
+    channel.consume('PRODUCT', (data) => {
+      console.log('Consuming PRODUCT queue');
+      order = JSON.parse(data.content);
+      channel.ack(data);
+    });
   });
 });
 
-function CreateOrder(products, userEmail) {
+function createOrder(products, userEmail) {
   let total = 0;
   for (
     let product_index = 0;
